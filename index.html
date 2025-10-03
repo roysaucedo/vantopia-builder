@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Vantopia — Build Your Van Kit</title>
+<style>
+  :root{
+    --bg:#f7f7f5; --panel:#ffffff; --ink:#1a1a1a; --sub:#6b7280;
+    --brand:#1f6f63; --brand-2:#aac7be; --muted:#e9ecef;
+    --ok:#156d3f; --err:#a00020; --radius:18px;
+    --shadow:0 10px 30px rgba(10,20,10,.08);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial}
+  .wrapper{max-width:1100px;margin:20px auto;padding:16px}
+  .header{display:flex;gap:16px;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap}
+  .brand{font-weight:800;letter-spacing:.04em}
+  .tagline{color:var(--sub);font-size:.95rem}
+  .stepper{display:flex;gap:6px;margin:10px 0 18px;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;padding-bottom:6px;scroll-snap-type:x proximity}
+  .stepper::-webkit-scrollbar{height:6px}
+  .stepper::-webkit-scrollbar-thumb{background:var(--muted);border-radius:999px}
+  .step{flex:0 0 auto;min-width:140px;white-space:nowrap;scroll-snap-align:start;position:relative;background:var(--panel);border:1px solid var(--muted);border-radius:12px;padding:8px 10px;text-align:center;font-weight:700;color:var(--sub);cursor:pointer;user-select:none}
+  .step:focus{outline:2px solid color-mix(in srgb, var(--brand) 50%, transparent)}
+  .step[data-active="true"]{border-color:var(--brand);color:var(--brand);box-shadow:0 0 0 2px color-mix(in srgb, var(--brand) 20%, transparent)}
+  .bar{height:6px;background:var(--muted);border-radius:999px;overflow:hidden;margin-top:8px}
+  .bar>span{display:block;height:100%;width:0;background:var(--brand);transition:width .35s ease}
+  @media (min-width:960px){
+    .stepper{display:grid;grid-template-columns:repeat(6,1fr);overflow:visible;padding-bottom:0;scroll-snap-type:none}
+    .step{min-width:auto}
+  }
+  .grid{display:grid;grid-template-columns:1fr 320px;gap:18px}
+  @media (max-width:960px){.grid{grid-template-columns:1fr}.summary{position:static}}
+  .panel{background:var(--panel);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+  .panel h2{margin:.25rem 0 6px;font-size:1.25rem}
+  .panel p.lead{color:var(--sub);margin:0 0 10px}
+  .cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:8px}
+  @media (max-width:720px){.cards{grid-template-columns:1fr}}
+  .card{border:1px solid var(--muted);border-radius:16px;overflow:hidden;background:#fff;display:flex;flex-direction:column}
+  .card .img{aspect-ratio:4/3;background:#f1f5f4}
+  .card .img img{width:100%;height:100%;object-fit:cover;display:block}
+  .card .body{padding:12px}
+  .card h3{margin:.1rem 0 .25rem;font-size:1rem}
+  .card .price{color:var(--ink);font-weight:700}
+  .card .sub{color:var(--sub);font-size:.9rem}
+  .card .select{margin:12px;gap:10px;display:flex;align-items:center;justify-content:space-between}
+  .checkwrap{display:flex;align-items:center;gap:10px}
+  .checkbox{width:22px;height:22px;border:2px solid var(--brand);border-radius:6px;display:grid;place-items:center;cursor:pointer;background:#fff;flex:0 0 22px}
+  .checkbox[data-on="true"]{background:var(--brand)}
+  .checkbox svg{width:14px;height:14px;stroke:#fff;stroke-width:3;fill:none;opacity:0;transition:opacity .2s}
+  .checkbox[data-on="true"] svg{opacity:1}
+  .none-pill{margin-left:auto;font-size:.85rem;color:var(--sub);cursor:pointer;text-decoration:underline}
+  .summary{position:sticky;top:12px;height:max-content}
+  .summary h3{margin:.25rem 0 .75rem}
+  .sum-row{display:flex;justify-content:space-between;gap:10px;margin:6px 0;color:var(--ink)}
+  .divider{height:1px;background:var(--muted);margin:10px 0}
+  .total{display:flex;justify-content:space-between;font-weight:800;font-size:1.1rem}
+  .note{font-size:.9rem;color:var(--sub)}
+  button,.btn{cursor:pointer;border:0;border-radius:12px;padding:12px 16px;font-weight:700}
+  .btn-primary{background:var(--brand);color:#fff}
+  .btn-ghost{background:#eef3f1;color:var(--brand)}
+  .nav{display:flex;justify-content:space-between;margin-top:16px}
+  .nav .left{display:flex;gap:10px}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:720px){.form-grid{grid-template-columns:1fr}}
+  label{display:block;font-weight:700;margin-bottom:6px}
+  input,select,textarea{width:100%;padding:12px 12px;border-radius:12px;border:1px solid var(--muted);background:#fff;font:inherit}
+  textarea{min-height:110px;resize:vertical}
+  .alert{background:#fff3f3;border:1px solid #ffd7d7;color:var(--err);padding:12px;border-radius:12px;margin-top:10px}
+  .success{background:#ecfdf3;border:1px solid #c1f1d8;color:var(--ok);padding:12px;border-radius:12px;margin-top:10px}
+  .small{font-size:.85rem;color:var(--sub)}
+  .footer-note{margin-top:8px;color:var(--sub);font-size:.9rem}
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <div>
+      <div class="brand">Build Your Van Kit</div>
+      <div class="tagline">Choose your layout in 5 easy steps. We’ll follow up to confirm and process payment.</div>
+    </div>
+    <div style="min-width:180px">
+      <div class="bar" aria-hidden="true"><span id="progress"></span></div>
+    </div>
+  </div>
+
+  <div class="stepper" id="stepper" role="tablist" aria-label="Steps">
+    <div class="step" data-active="true" tabindex="0">1 · Bed Base</div>
+    <div class="step" tabindex="0">2 · Flooring</div>
+    <div class="step" tabindex="0">3 · Panels</div>
+    <div class="step" tabindex="0">4 · Front Module</div>
+    <div class="step" tabindex="0">5 · Accessories</div>
+    <div class="step" tabindex="0">6 · Details</div>
+  </div>
+
+  <div class="grid">
+    <div id="steps"></div>
+    <aside class="summary panel" aria-live="polite">
+      <h3>Your Build</h3>
+      <div id="summaryLines"></div>
+      <div class="divider"></div>
+      <div class="total"><span>Estimated Total</span><span id="sumTotal">$0</span></div>
+      <p class="note">Prices are estimates; tax, shipping & installation are finalized by our team.</p>
+    </aside>
+  </div>
+
+  <p class="footer-note small">Your selections auto-save in this browser.</p>
+  <div id="submitStatus"></div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  /* ======== 0) CONFIG ======== */
+  // Points to your serverless function (Netlify). For Vercel, change to /api/vantopia-submit
+  const WEBHOOK_URL = "/.netlify/functions/vantopia-submit";
+
+  const CATALOG = {
+    bed_base: {
+      title: "Step 1 · Bed Base Kit",
+      type: "single", required: true,
+      options: [
+        { id:"raised_bed", name:"Raised Bed Cabinetry Kit", price: 8590, img:"https://static.wixstatic.com/media/2d2f9b_acc60ec5fa354a51960e85c478633297~mv2.png/v1/fill/w_1960,h_1102,al_c,q_95,usm_0.66_1.00_0.01,enc_avif,quality_auto/2d2f9b_acc60ec5fa354a51960e85c478633297~mv2.png", blurb:"Bedframe, overheads, galley, tray table, closet, accessory cabs, mounting rail, hardware." },
+        { id:"dinette_bed", name:"Dinette Bed Cabinetry Kit", price: 7890, img:"https://static.wixstatic.com/media/2d2f9b_c4b2a806730b46c78043e9880ed8206e~mv2.png/v1/fill/w_1960,h_1102,al_c,q_95,usm_0.66_1.00_0.01,enc_avif,quality_auto/2d2f9b_c4b2a806730b46c78043e9880ed8206e~mv2.png", blurb:"Convertible dinette to bed plus overheads, galley, tray, closet, accessories." },
+      ]
+    },
+    flooring: {
+      title: "Step 2 · Flooring",
+      type: "single", required: true,
+      options: [{ id:"insul_euro", name:"Insulated Europly Flooring", price: 2850, img:"", blurb:"Interlocking sections, 5\" seam insulation, trims & hardware." }]
+    },
+    panels: {
+      title: "Step 3 · Wall & Ceiling Panels",
+      type: "single", required: true,
+      options: [
+        { id:"acm", name:"ACM Paneling", price: 1850, img:"", blurb:"Durable aluminum composite." },
+        { id:"melamine", name:"Melamine Ply Paneling", price: 1150, img:"", blurb:"Lightweight & clean." }
+      ]
+    },
+    front_module: {
+      title: "Step 4 · Front Module",
+      type: "single-or-none", required: false,
+      options: [
+        { id:"pantry_combo", name:"Pantry Combo Module", price: 1950, img:"", blurb:"Compact pantry storage." },
+        { id:"window_combo", name:"Window Combo Module", price: 1950, img:"", blurb:"Window + storage." },
+        { id:"indoor_bath", name:"Preassembled Indoor Bathroom Module", price: 9950, img:"", blurb:"Self-contained bathroom." }
+      ]
+    },
+    accessories: {
+      title: "Step 5 · Accessories",
+      type: "multi", required: false,
+      options: [
+        { id:"bike_slider", name:"Bike & Storage Slider", price: 750, img:"", blurb:"Slide-out base for bikes & gear." },
+        { id:"dinette_cushions", name:"Dinette Cushions", price: 1750, img:"", blurb:"Upholstered cushions sized to our dinette." },
+        { id:"switch_fuse", name:"Prewired Switch & Fuse Panel", price: 450, img:"", blurb:"Clean power distribution." }
+      ]
+    }
+  };
+
+  /* ======== 1) STATE ======== */
+  const STATE_KEY = "vantopia.build.v2";
+  let state = {};
+  try { state = JSON.parse(localStorage.getItem(STATE_KEY) || "{}"); } catch(_) { state = {}; }
+  const money = n => `$${Number(n||0).toLocaleString()}`;
+
+  /* ======== 2) DOM HOOKS ======== */
+  const stepsEl = document.getElementById("steps");
+  const progressEl = document.getElementById("progress");
+  const stepperEl = document.getElementById("stepper");
+
+  const groupKeys = Object.keys(CATALOG);
+  const detailsStepIndex = groupKeys.length;
+  let current = Number(state.__step || 0);
+
+  function setStep(i){
+    current = Math.max(0, Math.min(i, detailsStepIndex));
+    state.__step = current; persist();
+    updateUI();
+    scrollTo({ top:0, behavior:"smooth" });
+  }
+
+  function updateUI(){
+    [...stepperEl.children].forEach((el, idx)=>{ el.dataset.active = (idx===current); });
+    const pct = (current/(detailsStepIndex))*100;
+    progressEl.style.width = pct+"%";
+
+    stepsEl.innerHTML = "";
+    if(current < detailsStepIndex){
+      const key = groupKeys[current];
+      stepsEl.appendChild(renderStep(key, CATALOG[key]));
+    }else{
+      stepsEl.appendChild(renderDetails());
+    }
+    renderSummary();
+    scrollActiveStepIntoView();
+  }
+
+  /* clickable stepper */
+  [...stepperEl.children].forEach((el, idx)=>{
+    el.addEventListener("click", ()=>setStep(idx));
+    el.addEventListener("keypress", (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); setStep(idx);} });
+  });
+
+  /* ======== 3) STEP PANELS ======== */
+  function renderStep(key, cfg){
+    const panel = div("panel");
+    panel.innerHTML = `<h2>${cfg.title}</h2><p class="lead">${leadText(key)}</p>`;
+    const wrap = div("cards");
+    const selected = state[key] ?? (cfg.type==="multi"? [] : null);
+
+    cfg.options.forEach(opt=>{
+      const card = div("card");
+      const img = div("img");
+      if(opt.img){ img.appendChild(imgTag(opt.img, opt.name)); }
+      card.appendChild(img);
+
+      const body = div("body");
+      body.innerHTML = `
+        <h3>${opt.name}</h3>
+        <div class="price">${money(opt.price)}</div>
+        <div class="sub">${opt.blurb || ""}</div>
+      `;
+      card.appendChild(body);
+
+      const sel = div("select");
+      const check = checkboxEl(isChecked(cfg, selected, opt.id));
+      const label = span(opt.name);
+      const checkWrap = div("checkwrap"); checkWrap.append(check,label);
+
+      const toggle = ()=>{ toggleSelection(cfg,key,opt.id,check); };
+      sel.addEventListener('click', toggle);
+      check.addEventListener("click", e=>{ e.stopPropagation(); toggle(); });
+
+      sel.appendChild(checkWrap);
+      card.appendChild(sel);
+      wrap.appendChild(card);
+    });
+
+    if(cfg.type==="single-or-none"){
+      const none = document.createElement("button");
+      none.type="button";
+      none.className="none-pill";
+      none.textContent = state[key] ? "Clear selection" : "Skip this step";
+      none.onclick = ()=>{ delete state[key]; persist(); updateUI(); };
+      panel.appendChild(none);
+    }
+
+    panel.appendChild(wrap);
+    panel.appendChild(navButtons());
+    return panel;
+  }
+
+  function renderDetails(){
+    const panel = div("panel");
+    panel.innerHTML = `
+      <h2>Step 6 · Your Details</h2>
+      <p class="lead">Tell us about your van and how to reach you. We’ll confirm availability and finalize payment.</p>
+      <div class="form-grid">
+        <div><label for="name">Full Name</label><input id="name" placeholder="Jane Doe" value="${state.name||""}"></div>
+        <div><label for="email">Email</label><input id="email" type="email" placeholder="you@example.com" value="${state.email||""}"></div>
+        <div><label for="phone">Phone</label><input id="phone" placeholder="(###) ###-####" value="${state.phone||""}"></div>
+        <div><label for="van">Van Model</label><select id="van">${optionList(["Sprinter 144","Sprinter 170","Transit Long","Transit Extended","Promaster 136","Promaster 159"], state.van)}</select></div>
+        <div><label for="install">Installation Preference</label><select id="install">${optionList(["Self install","Factory install at Vantopia","Undecided"], state.install)}</select></div>
+        <div><label for="timeline">Target Timeline</label><select id="timeline">${optionList(["ASAP","1–2 months","3–4 months","Just planning"], state.timeline)}</select></div>
+        <div style="grid-column:1/-1"><label for="notes">Notes</label><textarea id="notes" placeholder="Any specific needs, add-ons, or questions?">${state.notes||""}</textarea></div>
+      </div>
+      <div class="nav">
+        <div class="left">
+          <button class="btn btn-ghost" type="button" id="backBtn">← Back</button>
+        </div>
+        <div>
+          <button id="submitBtn" class="btn btn-primary" type="button">Submit Build</button>
+        </div>
+      </div>
+    `;
+    queueMicrotask(()=>{
+      ["name","email","phone","van","install","timeline","notes"].forEach(id=>{
+        const el = panel.querySelector("#"+id);
+        el && el.addEventListener("input", ()=>{ state[id] = el.value; persist(); });
+      });
+      panel.querySelector("#submitBtn").addEventListener("click", submitOrder);
+      panel.querySelector("#backBtn").addEventListener("click", ()=> setStep(detailsStepIndex-1));
+    });
+    return panel;
+  }
+
+  function navButtons(){
+    const nav = div("nav");
+    const left = div("left");
+    const back = button("btn btn-ghost","← Back", ()=> setStep(current-1));
+    if(current>0) left.appendChild(back);
+    const next = button("btn btn-primary","Next →", ()=> setStep(current+1));
+    nav.append(left, next);
+    return nav;
+  }
+
+  /* ======== 4) SELECTION LOGIC ======== */
+  function isChecked(cfg, selected, id){
+    if(cfg.type==="multi") return Array.isArray(selected) && selected.includes(id);
+    return selected === id;
+  }
+  function toggleSelection(cfg,key,id){
+    if(cfg.type==="multi"){
+      const arr = Array.isArray(state[key]) ? state[key] : [];
+      const i = arr.indexOf(id);
+      if(i>=0){ arr.splice(i,1); } else { arr.push(id); }
+      state[key] = arr;
+    }else{
+      if(state[key] === id){ delete state[key]; } else { state[key] = id; }
+    }
+    persist(); updateUI();
+  }
+
+  /* ======== 5) SUMMARY ======== */
+  function renderSummary(){
+    const box = document.getElementById("summaryLines");
+    box.innerHTML = "";
+    let total = 0;
+
+    groupKeys.forEach(k=>{
+      const cfg = CATALOG[k];
+      const sel = state[k];
+      let lines = [];
+
+      if(cfg.type==="multi" && Array.isArray(sel)){
+        lines = cfg.options.filter(o=>sel.includes(o.id));
+      }else if(sel){
+        const one = cfg.options.find(o=>o.id===sel);
+        if(one) lines = [one];
+      }
+
+      const title = div("small");
+      title.textContent = cfg.title.replace(/Step \d+ · /,"");
+      box.appendChild(title);
+
+      if(!lines.length){
+        box.appendChild(row("—",""));
+      }else{
+        lines.forEach(o=>{
+          total += o.price;
+          box.appendChild(row(o.name, money(o.price)));
+        });
+      }
+      box.appendChild(div("divider"));
+    });
+
+    document.getElementById("sumTotal").textContent = money(total);
+  }
+
+  /* ======== 6) SUBMIT via serverless function ======== */
+  async function submitOrder(){
+    const missing = [];
+    groupKeys.forEach(k=>{
+      const cfg = CATALOG[k];
+      if(cfg.required && cfg.type!=="multi" && !state[k]) missing.push(cfg.title);
+    });
+    if(!state.name) missing.push("Name");
+    if(!state.email) missing.push("Email");
+
+    const status = document.getElementById("submitStatus");
+    status.innerHTML = "";
+
+    if(missing.length){
+      status.innerHTML = `<div class="alert"><strong>Please complete:</strong> ${missing.join(", ")}</div>`;
+      return;
+    }
+
+    // Build payload (same as before)
+    const payload = buildPayload();
+
+    const btn = document.getElementById('submitBtn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
+
+    try{
+      const res = await fetch(WEBHOOK_URL, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify(payload)
+      });
+      const text = await res.text();
+      if(!res.ok){
+        console.error('Serverless failed', res.status, text);
+        throw new Error('Bad response '+res.status);
+      }
+      status.innerHTML = `<div class="success"><strong>Thank you!</strong> Your build was submitted. We’ll follow up by email shortly.</div>`;
+    }catch(err){
+      console.error(err);
+      status.innerHTML = `<div class="alert">We couldn’t reach the server. Please retry in a moment.</div>`;
+    }finally{
+      if (btn) { btn.disabled = false; btn.textContent = 'Submit Build'; }
+    }
+  }
+
+  function buildPayload(){
+    const selected = {};
+    let total = 0;
+
+    groupKeys.forEach(k=>{
+      const cfg = CATALOG[k];
+      const sel = state[k];
+      if(cfg.type==="multi"){
+        const items = (sel||[]).map(id => cfg.options.find(o=>o.id===id)).filter(Boolean);
+        selected[k] = items.map(o=>({id:o.id,name:o.name,price:o.price}));
+        total += items.reduce((s,o)=>s+o.price,0);
+      }else if(sel){
+        const o = cfg.options.find(o=>o.id===sel);
+        if(o){ selected[k] = {id:o.id,name:o.name,price:o.price}; total += o.price; }
+      }
+    });
+
+    const details = {
+      name: state.name || "",
+      email: state.email || "",
+      phone: state.phone || "",
+      van: state.van || "",
+      install: state.install || "",
+      timeline: state.timeline || "",
+      notes: state.notes || ""
+    };
+
+    return {
+      meta:{ source:"vantopia_wizard_v2", submittedAt: new Date().toISOString() },
+      selections:selected,
+      subtotal: total,
+      details
+    };
+  }
+
+  /* ======== 7) HELPERS ======== */
+  function leadText(key){
+    return ({
+      bed_base:"Select your base cabinetry layout.",
+      flooring:"Choose your insulated floor system.",
+      panels:"Pick your wall & ceiling panels.",
+      front_module:"Add a front module (optional).",
+      accessories:"Finish with optional accessories."
+    })[key] || "";
+  }
+  function optionList(arr, cur){
+    return ['<option value="" disabled selected hidden>Select...</option>',...arr.map(x=>`<option ${cur===x?'selected':''}>${x}</option>`)].join("");
+  }
+  function persist(){ localStorage.setItem(STATE_KEY, JSON.stringify(state)); }
+  function div(c){ const e=document.createElement("div"); if(c) e.className=c; return e; }
+  function span(t){ const e=document.createElement("span"); e.textContent=t; return e; }
+  function imgTag(src,alt){ const i=new Image(); i.src=src; i.alt=alt; return i; }
+  function button(cls,txt,fn){ const b=document.createElement("button"); b.type="button"; b.className="btn "+cls; b.textContent=txt; b.onclick=fn; return b; }
+  function row(l,r){ const e=div("sum-row"); const L=span(l); const R=span(r); e.append(L,R); return e; }
+
+  function checkboxEl(on=false){
+    const box = div("checkbox"); box.setAttribute("data-on", on?"true":"false");
+    const svg = document.createElementNS("http://www.w3.org/2000/svg","svg");
+    svg.setAttribute("viewBox","0 0 24 24");
+    const path = document.createElementNS("http://www.w3.org/2000/svg","path");
+    path.setAttribute("d","M5 13l4 4L19 7");
+    path.setAttribute("stroke-linecap","round");
+    path.setAttribute("stroke-linejoin","round");
+    svg.appendChild(path);
+    box.appendChild(svg);
+    return box;
+  }
+
+  function scrollActiveStepIntoView(){
+    const active = stepperEl.children[current];
+    if(!active) return;
+    active.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
+  }
+
+  updateUI();
+});
+</script>
+</body>
+</html>
