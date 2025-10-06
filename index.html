@@ -71,9 +71,19 @@
   .small{font-size:.85rem;color:var(--sub)}
   .footer-note{margin-top:8px;color:var(--sub);font-size:.9rem}
 </style>
+<link rel="icon" href="https://fav.farm/🚚" />
 </head>
 <body>
 <div class="wrapper">
+  <div class="header">
+    <div>
+      <img style="width: 100px;" src="https://static.wixstatic.com/media/2d2f9b_d5e859b8ac9249738ba93bb5a42eb5eb~mv2.png/v1/fill/w_200,h_194,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/vantopia22.png" alt="Van topia Logo">
+    </div>
+    <div>
+      <a class="tagline" href="https://www.vantopiavans.com/">Return to wesbite</a>
+    </div>
+  </div>
+
   <div class="header">
     <div>
       <div class="brand">Build Your Van Kit</div>
@@ -126,32 +136,32 @@ document.addEventListener("DOMContentLoaded", function() {
     flooring: {
       title: "Step 2 · Flooring",
       type: "single", required: true,
-      options: [{ id:"insul_euro", name:"Insulated Europly Flooring", price: 2850, img:"", blurb:"Interlocking sections, 5\" seam insulation, trims & hardware." }]
+      options: [{ id:"insul_euro", name:"Insulated Europly Flooring", price: 2850, img:"https://static.wixstatic.com/media/2d2f9b_f04eec3f9ec541dfae78bd3b1163223d~mv2.jpg/v1/fill/w_1960,h_1102,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/2d2f9b_f04eec3f9ec541dfae78bd3b1163223d~mv2.jpg", blurb:"Interlocking sections, 5\" seam insulation, trims & hardware." }]
     },
     panels: {
       title: "Step 3 · Wall & Ceiling Panels",
       type: "single", required: true,
       options: [
-        { id:"acm", name:"ACM Paneling", price: 1850, img:"", blurb:"Durable aluminum composite." },
-        { id:"melamine", name:"Melamine Ply Paneling", price: 1150, img:"", blurb:"Lightweight & clean." }
+        { id:"acm", name:"ACM Paneling", price: 1850, img:"https://static.wixstatic.com/media/2d2f9b_be361947bb784e69a4cf7d4aff4be9b0~mv2.jpg/v1/fill/w_420,h_262,al_c,lg_1,q_85/2d2f9b_be361947bb784e69a4cf7d4aff4be9b0~mv2.webp", blurb:"Durable aluminum composite." },
+        { id:"melamine", name:"Melamine Ply Paneling", price: 1150, img:"https://static.wixstatic.com/media/2d2f9b_b43c8cfa88414aee999dfbf11e7a67d0~mv2.jpg/v1/fill/w_960,h_598,al_c,q_85,usm_0.66_1.00_0.01/2d2f9b_b43c8cfa88414aee999dfbf11e7a67d0~mv2.webp", blurb:"Lightweight & clean." }
       ]
     },
     front_module: {
       title: "Step 4 · Front Module",
       type: "single-or-none", required: false,
       options: [
-        { id:"pantry_combo", name:"Pantry Combo Module", price: 1950, img:"", blurb:"Compact pantry storage." },
-        { id:"window_combo", name:"Window Combo Module", price: 1950, img:"", blurb:"Window + storage." },
-        { id:"indoor_bath", name:"Preassembled Indoor Bathroom Module", price: 9950, img:"", blurb:"Self-contained bathroom." }
+        { id:"pantry_combo", name:"Pantry Combo Module", price: 1950, img:"https://static.wixstatic.com/media/4b7f87_105e956e305a494d80b7cf98a8acb2e3~mv2.png/v1/fill/w_776,h_682,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/Pantry%20Combo%20Module.png", blurb:"Compact pantry storage." },
+        { id:"window_combo", name:"Window Combo Module", price: 1950, img:"https://static.wixstatic.com/media/4b7f87_a7d7dd0cbe2e459197949a4c6dc547b6~mv2.png/v1/fill/w_750,h_682,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/Window%20Combo%20Module.png", blurb:"Window + storage." },
+        { id:"indoor_bath", name:"Preassembled Indoor Bathroom Module", price: 9950, img:"https://static.wixstatic.com/media/2d2f9b_68be95a8c93c48d596b891bfb018bd74~mv2.jpeg/v1/fill/w_1960,h_1102,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/2d2f9b_68be95a8c93c48d596b891bfb018bd74~mv2.jpeg", blurb:"Self-contained bathroom." }
       ]
     },
     accessories: {
       title: "Step 5 · Accessories",
       type: "multi", required: false,
       options: [
-        { id:"bike_slider", name:"Bike & Storage Slider", price: 750, img:"", blurb:"Slide-out base for bikes & gear." },
-        { id:"dinette_cushions", name:"Dinette Cushions", price: 1750, img:"", blurb:"Upholstered cushions sized to our dinette." },
-        { id:"switch_fuse", name:"Prewired Switch & Fuse Panel", price: 450, img:"", blurb:"Clean power distribution." }
+        { id:"bike_slider", name:"Bike & Storage Slider", price: 750, img:"https://static.wixstatic.com/media/4b7f87_8426031d57514266881361588f1380b0~mv2.png/v1/fill/w_776,h_682,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/bike%20Module.png", blurb:"Slide-out base for bikes & gear." },
+        { id:"dinette_cushions", name:"Dinette Cushions", price: 1750, img:"https://static.wixstatic.com/media/4b7f87_099fe720220e439aa8c67c0108872ce9~mv2.png/v1/fill/w_776,h_682,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/dinette%20cushions.png", blurb:"Upholstered cushions sized to our dinette." },
+        { id:"switch_fuse", name:"Prewired Switch & Fuse Panel", price: 450, img:"https://static.wixstatic.com/media/4b7f87_3abc6e9417ea4f9288cc0861ced47e44~mv2.avif/v1/fill/w_750,h_682,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/2d2f9b_5b0fa7cf68564b2591e5edc4348d8b66~mv2.avif", blurb:"Clean power distribution." }
       ]
     }
   };
