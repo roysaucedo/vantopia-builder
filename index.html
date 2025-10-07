@@ -12,8 +12,18 @@
     --shadow:0 10px 30px rgba(10,20,10,.08);
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial}
-  .wrapper{max-width:90%;margin:20px auto;padding:16px}
+  body{
+    margin:0;
+    /* background:var(--bg); */
+    background:
+    var(--bg)
+    url("https://static.wixstatic.com/media/11062b_560805ef563246db96e8ecec2d701f6f~mv2.png/v1/fill/w_3019,h_1684,al_c,q_95,enc_avif,quality_auto/11062b_560805ef563246db96e8ecec2d701f6f~mv2.png")
+    center / cover no-repeat fixed;
+    color:var(--ink);
+    font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial
+  }
+  
+  .wrapper{max-width:100%;margin:20px auto;padding:16px}
   .header{display:flex;gap:16px;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap}
   .brand{font-weight:800;letter-spacing:.04em}
   .tagline{color:var(--sub);font-size:.95rem}
