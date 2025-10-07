@@ -268,7 +268,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <div><label for="name">Full Name</label><input id="name" placeholder="Jane Doe" value="${state.name||""}"></div>
         <div><label for="email">Email</label><input id="email" type="email" placeholder="you@example.com" value="${state.email||""}"></div>
         <div><label for="phone">Phone</label><input id="phone" placeholder="(###) ###-####" value="${state.phone||""}"></div>
-        <div><label for="van">Van Model</label><select id="van">${optionList(["Sprinter 144","Sprinter 170","Transit Long","Transit Extended","Promaster 136","Promaster 159"], state.van)}</select></div>
+        <div><label for="van">Van Model</label><select id="van">${optionList(["Sprinter 144","Sprinter 170","Sprinter 170 EXT","Transit Long","Transit Extended","Promaster 136","Promaster 159","Promaster 159 EXT"], state.van)}</select></div>
         <div><label for="install">Installation Preference</label><select id="install">${optionList(["Self install","Factory install at Vantopia","Undecided"], state.install)}</select></div>
         <div><label for="timeline">Target Timeline</label><select id="timeline">${optionList(["ASAP","1–2 months","3–4 months","Just planning"], state.timeline)}</select></div>
         <div style="grid-column:1/-1"><label for="notes">Notes</label><textarea id="notes" placeholder="Any specific needs, add-ons, or questions?">${state.notes||""}</textarea></div>
