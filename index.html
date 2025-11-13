@@ -36,7 +36,7 @@
   .bar{height:6px;background:var(--muted);border-radius:999px;overflow:hidden;margin-top:8px}
   .bar>span{display:block;height:100%;width:0;background:var(--brand);transition:width .35s ease}
   @media (min-width:960px){
-    .stepper{display:grid;grid-template-columns:repeat(6,1fr);overflow:visible;padding-bottom:0;scroll-snap-type:none}
+    .stepper{display:grid;grid-template-columns:repeat(7,1fr);overflow:visible;padding-bottom:0;scroll-snap-type:none}
     .step{min-width:auto}
   }
   .grid{display:grid;grid-template-columns:1fr 320px;gap:18px}
@@ -46,6 +46,7 @@
   .panel p.lead{color:var(--sub);margin:0 0 10px}
   .cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:8px}
   @media (max-width:720px){.cards{grid-template-columns:1fr}}
+  @media (min-width:960px){.cards.van-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
   .card{border:1px solid var(--muted);border-radius:16px;overflow:hidden;background:#fff;display:flex;flex-direction:column}
   .card .img{aspect-ratio:4/3;background:#f1f5f4}
   .card .img img{width:100%;height:100%;object-fit:cover;display:block}
@@ -90,14 +91,14 @@
       <img style="width: 100px;" src="https://static.wixstatic.com/media/2d2f9b_d5e859b8ac9249738ba93bb5a42eb5eb~mv2.png/v1/fill/w_200,h_194,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/vantopia22.png" alt="Van topia Logo">
     </div>
     <div>
-      <a class="tagline" href="https://www.vantopiavans.com/">Return to wesbite</a>
+      <a class="tagline" href="https://www.vantopiavans.com/">Return to website</a>
     </div>
   </div>
 
   <div class="header">
     <div>
       <div class="brand">Build Your Van Kit</div>
-      <div class="tagline">Choose your layout in 5 easy steps. We’ll follow up to confirm and process payment.</div>
+      <div class="tagline">Choose your layout in 7 easy steps. We'll follow up to confirm and process payment.</div>
     </div>
     <div style="min-width:180px">
       <div class="bar" aria-hidden="true"><span id="progress"></span></div>
@@ -105,12 +106,13 @@
   </div>
 
   <div class="stepper" id="stepper" role="tablist" aria-label="Steps">
-    <div class="step" data-active="true" tabindex="0">1 · Bed Base</div>
-    <div class="step" tabindex="0">2 · Flooring</div>
-    <div class="step" tabindex="0">3 · Panels</div>
-    <div class="step" tabindex="0">4 · Front Module</div>
-    <div class="step" tabindex="0">5 · Accessories</div>
-    <div class="step" tabindex="0">6 · Details</div>
+    <div class="step" data-active="true" tabindex="0">1 · Van Model</div>
+    <div class="step" tabindex="0">2 · Bed Base</div>
+    <div class="step" tabindex="0">3 · Flooring</div>
+    <div class="step" tabindex="0">4 · Panels</div>
+    <div class="step" tabindex="0">5 · Front Module</div>
+    <div class="step" tabindex="0">6 · Accessories</div>
+    <div class="step" tabindex="0">7 · Details</div>
   </div>
 
   <div class="grid">
@@ -135,21 +137,59 @@ document.addEventListener("DOMContentLoaded", function() {
   const WEBHOOK_URL = "/.netlify/functions/vantopia-submit";
 
   const CATALOG = {
-    bed_base: {
-      title: "Step 1 · Bed Base Kit",
+    van_model: {
+      title: "Step 1 · Select Your Van Model",
       type: "single", required: true,
       options: [
-        { id:"raised_bed", name:"Raised Bed Cabinetry Kit - $2,000 OFF Applied", price: 3950, img:"https://static.wixstatic.com/media/2d2f9b_acc60ec5fa354a51960e85c478633297~mv2.png/v1/fill/w_1960,h_1102,al_c,q_95,usm_0.66_1.00_0.01,enc_avif,quality_auto/2d2f9b_acc60ec5fa354a51960e85c478633297~mv2.png", blurb:"Was $5,950 - Now $3,950 | Bedframe, overheads, galley, tray table, closet, accessory cabs, mounting rail, hardware." },
-        { id:"dinette_bed", name:"Dinette Bed Cabinetry Kit  - $2,000 OFF Applied", price: 5950, img:"https://static.wixstatic.com/media/2d2f9b_c4b2a806730b46c78043e9880ed8206e~mv2.png/v1/fill/w_1960,h_1102,al_c,q_95,usm_0.66_1.00_0.01,enc_avif,quality_auto/2d2f9b_c4b2a806730b46c78043e9880ed8206e~mv2.png", blurb:"Was $7,950 - Now $5,950 | Convertible dinette to bed plus overheads, galley, tray, closet, accessories." },
+        { id:"sprinter_144", name:"Sprinter 144", img:"https://static.wixstatic.com/media/4b7f87_fc0a4a4f1bd341fea91642d7eadf49bd~mv2.png", blurb:"Compact Sprinter" },
+        { id:"sprinter_170", name:"Sprinter 170", img:"https://static.wixstatic.com/media/4b7f87_fc0a4a4f1bd341fea91642d7eadf49bd~mv2.png", blurb:"Extended Sprinter" },
+        { id:"sprinter_170_ext", name:"Sprinter 170 EXT", img:"https://static.wixstatic.com/media/4b7f87_fc0a4a4f1bd341fea91642d7eadf49bd~mv2.png", blurb:"Extended Sprinter" },
+        { id:"transit_long", name:"Transit 148 Long", img:"https://static.wixstatic.com/media/4b7f87_02843e1f162044b7ba6b77141bdd38c3~mv2.png", blurb:"Ford Transit Long" },
+        { id:"transit_extended", name:"Transit 148 Extended", img:"https://static.wixstatic.com/media/4b7f87_02843e1f162044b7ba6b77141bdd38c3~mv2.png", blurb:"Ford Transit Extended" },
+        { id:"promaster_136", name:"Promaster 136", img:"https://static.wixstatic.com/media/4b7f87_f9b1a52afbc84969bf51ba452073dd60~mv2.png", blurb:"Compact Promaster" },
+        { id:"promaster_159", name:"Promaster 159", img:"https://static.wixstatic.com/media/4b7f87_f9b1a52afbc84969bf51ba452073dd60~mv2.png", blurb:"Extended Promaster" },
+        { id:"promaster_159_ext", name:"Promaster 159 EXT", img:"https://static.wixstatic.com/media/4b7f87_f9b1a52afbc84969bf51ba452073dd60~mv2.png", blurb:"Extended Promaster" },
+      ]
+    },
+    bed_base: {
+      title: "Step 2 · Bed Base Kit",
+      type: "single", required: true,
+      getPricing: function() {
+        return {
+          raised_bed: {
+            base: 3950,
+            premiums: {
+              sprinter_170: 1000,
+              sprinter_170_ext: 1000,
+              transit_extended: 1000,
+              promaster_159: 1000,
+              promaster_159_ext: 1000
+            }
+          },
+          dinette_bed: {
+            base: 5950,
+            premiums: {
+              sprinter_170: 1000,
+              sprinter_170_ext: 1000,
+              transit_extended: 1000,
+              promaster_159: 1000,
+              promaster_159_ext: 1000
+            }
+          }
+        };
+      },
+      options: [
+        { id:"raised_bed", name:"Raised Bed Cabinetry Kit", basePrice: 3950, img:"https://static.wixstatic.com/media/2d2f9b_acc60ec5fa354a51960e85c478633297~mv2.png/v1/fill/w_1960,h_1102,al_c,q_95,usm_0.66_1.00_0.01,enc_avif,quality_auto/2d2f9b_acc60ec5fa354a51960e85c478633297~mv2.png", blurb:"Was $5,950 - Now starting at $3,950 | Bedframe, overheads, galley, tray table, closet, accessory cabs, mounting rail, hardware." },
+        { id:"dinette_bed", name:"Dinette Bed Cabinetry Kit", basePrice: 5950, img:"https://static.wixstatic.com/media/2d2f9b_c4b2a806730b46c78043e9880ed8206e~mv2.png/v1/fill/w_1960,h_1102,al_c,q_95,usm_0.66_1.00_0.01,enc_avif,quality_auto/2d2f9b_c4b2a806730b46c78043e9880ed8206e~mv2.png", blurb:"Was $7,950 - Now starting at $5,950 | Convertible dinette to bed plus overheads, galley, tray, closet, accessories." },
       ]
     },
     flooring: {
-      title: "Step 2 · Flooring",
+      title: "Step 3 · Flooring",
       type: "single-or-none", required: false,
       options: [{ id:"insul_euro", name:"Insulated Europly Flooring", price: 2850, img:"https://static.wixstatic.com/media/2d2f9b_f04eec3f9ec541dfae78bd3b1163223d~mv2.jpg/v1/fill/w_1960,h_1102,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/2d2f9b_f04eec3f9ec541dfae78bd3b1163223d~mv2.jpg", blurb:"Interlocking sections, 5\" seam insulation, trims & hardware." }]
     },
     panels: {
-      title: "Step 3 · Wall & Ceiling Panels",
+      title: "Step 4 · Wall & Ceiling Panels",
       type: "single", required: true,
       options: [
         { id:"acm", name:"ACM Paneling", price: 1850, img:"https://static.wixstatic.com/media/2d2f9b_be361947bb784e69a4cf7d4aff4be9b0~mv2.jpg/v1/fill/w_420,h_262,al_c,lg_1,q_85/2d2f9b_be361947bb784e69a4cf7d4aff4be9b0~mv2.webp", blurb:"Durable aluminum composite." },
@@ -157,7 +197,7 @@ document.addEventListener("DOMContentLoaded", function() {
       ]
     },
     front_module: {
-      title: "Step 4 · Front Module",
+      title: "Step 5 · Front Module",
       type: "single-or-none", required: false,
       options: [
         { id:"pantry_combo", name:"Pantry Combo Module", price: 1950, img:"https://static.wixstatic.com/media/4b7f87_105e956e305a494d80b7cf98a8acb2e3~mv2.png/v1/fill/w_776,h_682,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/Pantry%20Combo%20Module.png", blurb:"Compact pantry storage." },
@@ -166,7 +206,7 @@ document.addEventListener("DOMContentLoaded", function() {
       ]
     },
     accessories: {
-      title: "Step 5 · Accessories",
+      title: "Step 6 · Accessories",
       type: "multi", required: false,
       options: [
         { id:"bike_slider", name:"Bike & Storage Slider", price: 750, img:"https://static.wixstatic.com/media/4b7f87_8426031d57514266881361588f1380b0~mv2.png/v1/fill/w_776,h_682,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/bike%20Module.png", blurb:"Slide-out base for bikes & gear." },
@@ -181,6 +221,19 @@ document.addEventListener("DOMContentLoaded", function() {
   let state = {};
   try { state = JSON.parse(localStorage.getItem(STATE_KEY) || "{}"); } catch(_) { state = {}; }
   const money = n => `$${Number(n||0).toLocaleString()}`;
+
+  function getBedPrice(bedId, vanModel) {
+    const bedCfg = CATALOG.bed_base;
+    const bed = bedCfg.options.find(o => o.id === bedId);
+    if (!bed) return 0;
+    
+    const pricing = bedCfg.getPricing();
+    const bedPricing = pricing[bedId];
+    if (!bedPricing) return bed.basePrice;
+    
+    const premium = bedPricing.premiums[vanModel] || 0;
+    return bedPricing.base + premium;
+  }
 
   /* ======== 2) DOM HOOKS ======== */
   const stepsEl = document.getElementById("steps");
@@ -227,6 +280,11 @@ document.addEventListener("DOMContentLoaded", function() {
     const wrap = div("cards");
     const selected = state[key] ?? (cfg.type==="multi"? [] : null);
 
+    // For van_model, use 3 columns on desktop
+    if(key === "van_model") {
+      wrap.classList.add("van-grid");
+    }
+
     cfg.options.forEach(opt=>{
       const card = div("card");
       const img = div("img");
@@ -234,11 +292,39 @@ document.addEventListener("DOMContentLoaded", function() {
       card.appendChild(img);
 
       const body = div("body");
-      body.innerHTML = `
-        <h3>${opt.name}</h3>
-        <div class="price">${money(opt.price)}</div>
-        <div class="sub">${opt.blurb || ""}</div>
-      `;
+      
+      // Calculate dynamic price for bed base
+      let displayPrice = opt.price;
+      let priceLabel = "";
+      
+      if(key === "bed_base") {
+        const vanModel = state.van_model;
+        if(vanModel) {
+          displayPrice = getBedPrice(opt.id, vanModel);
+          const pricing = cfg.getPricing();
+          const premium = pricing[opt.id].premiums[vanModel] || 0;
+          if(premium > 0) {
+            priceLabel = ` <span class="small" style="font-weight:400">(+$${premium.toLocaleString()} for your van)</span>`;
+          }
+        } else {
+          displayPrice = opt.basePrice;
+          priceLabel = ' <span class="small" style="font-weight:400">(select van model first)</span>';
+        }
+      }
+      
+      // Build HTML based on whether this is van_model or has pricing
+      if(key === "van_model") {
+        body.innerHTML = `
+          <h3>${opt.name}</h3>
+          <div class="sub">${opt.blurb || ""}</div>
+        `;
+      } else {
+        body.innerHTML = `
+          <h3>${opt.name}</h3>
+          <div class="price">${money(displayPrice)}${priceLabel}</div>
+          <div class="sub">${opt.blurb || ""}</div>
+        `;
+      }
       card.appendChild(body);
 
       const sel = div("select");
@@ -272,13 +358,12 @@ document.addEventListener("DOMContentLoaded", function() {
   function renderDetails(){
     const panel = div("panel");
     panel.innerHTML = `
-      <h2>Step 6 · Your Details</h2>
-      <p class="lead">Tell us about your van and how to reach you. We’ll confirm availability and finalize payment.</p>
+      <h2>Step 7 · Your Details</h2>
+      <p class="lead">Tell us about your build and how to reach you. We'll confirm availability and finalize payment.</p>
       <div class="form-grid">
         <div><label for="name">Full Name</label><input id="name" placeholder="Jane Doe" value="${state.name||""}"></div>
         <div><label for="email">Email</label><input id="email" type="email" placeholder="you@example.com" value="${state.email||""}"></div>
         <div><label for="phone">Phone</label><input id="phone" placeholder="(###) ###-####" value="${state.phone||""}"></div>
-        <div><label for="van">Van Model</label><select id="van">${optionList(["Sprinter 144","Sprinter 170","Sprinter 170 EXT","Transit Long","Transit Extended","Promaster 136","Promaster 159","Promaster 159 EXT"], state.van)}</select></div>
         <div><label for="install">Installation Preference</label><select id="install">${optionList(["Self install","Factory install at Vantopia","Undecided"], state.install)}</select></div>
         <div><label for="timeline">Target Timeline</label><select id="timeline">${optionList(["ASAP","1–2 months","3–4 months","Just planning"], state.timeline)}</select></div>
         <div style="grid-column:1/-1"><label for="notes">Notes</label><textarea id="notes" placeholder="Any specific needs, add-ons, or questions?">${state.notes||""}</textarea></div>
@@ -293,7 +378,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </div>
     `;
     queueMicrotask(()=>{
-      ["name","email","phone","van","install","timeline","notes"].forEach(id=>{
+      ["name","email","phone","install","timeline","notes"].forEach(id=>{
         const el = panel.querySelector("#"+id);
         el && el.addEventListener("input", ()=>{ state[id] = el.value; persist(); });
       });
@@ -356,8 +441,16 @@ document.addEventListener("DOMContentLoaded", function() {
         box.appendChild(row("—",""));
       }else{
         lines.forEach(o=>{
-          total += o.price;
-          box.appendChild(row(o.name, money(o.price)));
+          let price = o.price;
+          
+          // Calculate dynamic price for bed base
+          if(k === "bed_base") {
+            const vanModel = state.van_model;
+            price = vanModel ? getBedPrice(o.id, vanModel) : o.basePrice;
+          }
+          
+          total += price;
+          box.appendChild(row(o.name, money(price)));
         });
       }
       box.appendChild(div("divider"));
@@ -384,7 +477,7 @@ document.addEventListener("DOMContentLoaded", function() {
       return;
     }
 
-    // Build payload (same as before)
+    // Build payload
     const payload = buildPayload();
 
     const btn = document.getElementById('submitBtn');
@@ -401,10 +494,10 @@ document.addEventListener("DOMContentLoaded", function() {
         console.error('Serverless failed', res.status, text);
         throw new Error('Bad response '+res.status);
       }
-      status.innerHTML = `<div class="success"><strong>Thank you!</strong> Your build was submitted. We’ll follow up by email shortly.</div>`;
+      status.innerHTML = `<div class="success"><strong>Thank you!</strong> Your build was submitted. We'll follow up by email shortly.</div>`;
     }catch(err){
       console.error(err);
-      status.innerHTML = `<div class="alert">We couldn’t reach the server. Please retry in a moment.</div>`;
+      status.innerHTML = `<div class="alert">We couldn't reach the server. Please retry in a moment.</div>`;
     }finally{
       if (btn) { btn.disabled = false; btn.textContent = 'Submit Build'; }
     }
@@ -423,15 +516,33 @@ document.addEventListener("DOMContentLoaded", function() {
         total += items.reduce((s,o)=>s+o.price,0);
       }else if(sel){
         const o = cfg.options.find(o=>o.id===sel);
-        if(o){ selected[k] = {id:o.id,name:o.name,price:o.price}; total += o.price; }
+        if(o){ 
+          let price = o.price;
+          
+          // Calculate dynamic price for bed base
+          if(k === "bed_base") {
+            const vanModel = state.van_model;
+            price = vanModel ? getBedPrice(o.id, vanModel) : o.basePrice;
+          }
+          
+          selected[k] = {id:o.id,name:o.name,price:price}; 
+          total += price; 
+        }
       }
     });
+
+    // Get van model name for details
+    let vanModelName = "";
+    if(state.van_model) {
+      const vanOpt = CATALOG.van_model.options.find(o => o.id === state.van_model);
+      vanModelName = vanOpt ? vanOpt.name : "";
+    }
 
     const details = {
       name: state.name || "",
       email: state.email || "",
       phone: state.phone || "",
-      van: state.van || "",
+      van: vanModelName,
       install: state.install || "",
       timeline: state.timeline || "",
       notes: state.notes || ""
@@ -448,8 +559,9 @@ document.addEventListener("DOMContentLoaded", function() {
   /* ======== 7) HELPERS ======== */
   function leadText(key){
     return ({
-      bed_base:"Select your base cabinetry layout.",
-      flooring:"Choose your insulated floor system.",
+      van_model:"Select your van to see accurate pricing.",
+      bed_base:"Select your base cabinetry layout. Pricing adjusts based on your van model.",
+      flooring:"Choose your insulated floor system (optional if you already have flooring).",
       panels:"Pick your wall & ceiling panels.",
       front_module:"Add a front module (optional).",
       accessories:"Finish with optional accessories."
