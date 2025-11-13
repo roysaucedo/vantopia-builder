@@ -441,7 +441,7 @@ document.addEventListener("DOMContentLoaded", function() {
         box.appendChild(row("—",""));
       }else{
         lines.forEach(o=>{
-          let price = o.price;
+          let price = o.price || 0;
           
           // Calculate dynamic price for bed base
           if(k === "bed_base") {
@@ -449,8 +449,17 @@ document.addEventListener("DOMContentLoaded", function() {
             price = vanModel ? getBedPrice(o.id, vanModel) : o.basePrice;
           }
           
-          total += price;
-          box.appendChild(row(o.name, money(price)));
+          // Only add to total if this isn't van_model (which has no price)
+          if(k !== "van_model") {
+            total += price;
+          }
+          
+          // Display price only for non-van_model items
+          if(k === "van_model") {
+            box.appendChild(row(o.name, ""));
+          } else {
+            box.appendChild(row(o.name, money(price)));
+          }
         });
       }
       box.appendChild(div("divider"));
@@ -510,6 +519,10 @@ document.addEventListener("DOMContentLoaded", function() {
     groupKeys.forEach(k=>{
       const cfg = CATALOG[k];
       const sel = state[k];
+      
+      // Skip van_model in selections (it goes in details.van instead)
+      if(k === "van_model") return;
+      
       if(cfg.type==="multi"){
         const items = (sel||[]).map(id => cfg.options.find(o=>o.id===id)).filter(Boolean);
         selected[k] = items.map(o=>({id:o.id,name:o.name,price:o.price}));
@@ -517,7 +530,7 @@ document.addEventListener("DOMContentLoaded", function() {
       }else if(sel){
         const o = cfg.options.find(o=>o.id===sel);
         if(o){ 
-          let price = o.price;
+          let price = o.price || 0;
           
           // Calculate dynamic price for bed base
           if(k === "bed_base") {
