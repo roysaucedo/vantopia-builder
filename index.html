@@ -186,14 +186,54 @@ document.addEventListener("DOMContentLoaded", function() {
     flooring: {
       title: "Step 3 · Flooring",
       type: "single-or-none", required: false,
-      options: [{ id:"insul_euro", name:"Insulated Europly Flooring", price: 2850, img:"https://static.wixstatic.com/media/2d2f9b_f04eec3f9ec541dfae78bd3b1163223d~mv2.jpg/v1/fill/w_1960,h_1102,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/2d2f9b_f04eec3f9ec541dfae78bd3b1163223d~mv2.jpg", blurb:"Interlocking sections, 5\" seam insulation, trims & hardware." }]
+      getPricing: function() {
+        return {
+          insul_euro: {
+            base: 2850,
+            premiums: {
+              sprinter_170: 800,
+              sprinter_170_ext: 800,
+              transit_extended: 800,
+              promaster_159: 800,
+              promaster_159_ext: 800
+            }
+          }
+        };
+      },
+      options: [
+        { id:"insul_euro", name:"Insulated Europly Flooring", basePrice: 2850, img:"https://static.wixstatic.com/media/2d2f9b_f04eec3f9ec541dfae78bd3b1163223d~mv2.jpg/v1/fill/w_1960,h_1102,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/2d2f9b_f04eec3f9ec541dfae78bd3b1163223d~mv2.jpg", blurb:"Interlocking sections, 5\" seam insulation, trims & hardware." }
+      ]
     },
     panels: {
       title: "Step 4 · Wall & Ceiling Panels",
       type: "single", required: true,
+      getPricing: function() {
+        return {
+          acm: {
+            base: 2850,
+            premiums: {
+              sprinter_170: 400,
+              sprinter_170_ext: 400,
+              transit_extended: 400,
+              promaster_159: 400,
+              promaster_159_ext: 400
+            }
+          },
+          melamine: {
+            base: 1150,
+            premiums: {
+              sprinter_170: 225,
+              sprinter_170_ext: 225,
+              transit_extended: 225,
+              promaster_159: 225,
+              promaster_159_ext: 225
+            }
+          }
+        };
+      },
       options: [
-        { id:"acm", name:"ACM Paneling", price: 1850, img:"https://static.wixstatic.com/media/2d2f9b_be361947bb784e69a4cf7d4aff4be9b0~mv2.jpg/v1/fill/w_420,h_262,al_c,lg_1,q_85/2d2f9b_be361947bb784e69a4cf7d4aff4be9b0~mv2.webp", blurb:"Durable aluminum composite." },
-        { id:"melamine", name:"Melamine Ply Paneling", price: 1150, img:"https://static.wixstatic.com/media/2d2f9b_b43c8cfa88414aee999dfbf11e7a67d0~mv2.jpg/v1/fill/w_960,h_598,al_c,q_85,usm_0.66_1.00_0.01/2d2f9b_b43c8cfa88414aee999dfbf11e7a67d0~mv2.webp", blurb:"Lightweight & clean." }
+        { id:"acm", name:"ACM Paneling", basePrice: 2850, img:"https://static.wixstatic.com/media/2d2f9b_be361947bb784e69a4cf7d4aff4be9b0~mv2.jpg/v1/fill/w_420,h_262,al_c,lg_1,q_85/2d2f9b_be361947bb784e69a4cf7d4aff4be9b0~mv2.webp", blurb:"Durable aluminum composite." },
+        { id:"melamine", name:"Melamine Ply Paneling", basePrice: 1150, img:"https://static.wixstatic.com/media/2d2f9b_b43c8cfa88414aee999dfbf11e7a67d0~mv2.jpg/v1/fill/w_960,h_598,al_c,q_85,usm_0.66_1.00_0.01/2d2f9b_b43c8cfa88414aee999dfbf11e7a67d0~mv2.webp", blurb:"Lightweight & clean." }
       ]
     },
     front_module: {
@@ -222,17 +262,28 @@ document.addEventListener("DOMContentLoaded", function() {
   try { state = JSON.parse(localStorage.getItem(STATE_KEY) || "{}"); } catch(_) { state = {}; }
   const money = n => `$${Number(n||0).toLocaleString()}`;
 
+  // Generic function to get dynamic pricing for any product
+  function getDynamicPrice(catalogKey, itemId, vanModel) {
+    const cfg = CATALOG[catalogKey];
+    const item = cfg.options.find(o => o.id === itemId);
+    if (!item) return 0;
+    
+    // If there's no getPricing function, return the static price
+    if (!cfg.getPricing) {
+      return item.price || 0;
+    }
+    
+    const pricing = cfg.getPricing();
+    const itemPricing = pricing[itemId];
+    if (!itemPricing) return item.basePrice || item.price || 0;
+    
+    const premium = itemPricing.premiums[vanModel] || 0;
+    return itemPricing.base + premium;
+  }
+
+  // Backwards compatibility - keep the old function name
   function getBedPrice(bedId, vanModel) {
-    const bedCfg = CATALOG.bed_base;
-    const bed = bedCfg.options.find(o => o.id === bedId);
-    if (!bed) return 0;
-    
-    const pricing = bedCfg.getPricing();
-    const bedPricing = pricing[bedId];
-    if (!bedPricing) return bed.basePrice;
-    
-    const premium = bedPricing.premiums[vanModel] || 0;
-    return bedPricing.base + premium;
+    return getDynamicPrice('bed_base', bedId, vanModel);
   }
 
   /* ======== 2) DOM HOOKS ======== */
@@ -293,21 +344,25 @@ document.addEventListener("DOMContentLoaded", function() {
 
       const body = div("body");
       
-      // Calculate dynamic price for bed base
-      let displayPrice = opt.price;
+      // Calculate dynamic price
+      let displayPrice = opt.price || 0;
       let priceLabel = "";
       
-      if(key === "bed_base") {
+      // Check if this category has dynamic pricing
+      if(cfg.getPricing) {
         const vanModel = state.van_model;
         if(vanModel) {
-          displayPrice = getBedPrice(opt.id, vanModel);
+          displayPrice = getDynamicPrice(key, opt.id, vanModel);
           const pricing = cfg.getPricing();
-          const premium = pricing[opt.id].premiums[vanModel] || 0;
-          if(premium > 0) {
-            priceLabel = ` <span class="small" style="font-weight:400">(+$${premium.toLocaleString()} for your van)</span>`;
+          const itemPricing = pricing[opt.id];
+          if(itemPricing) {
+            const premium = itemPricing.premiums[vanModel] || 0;
+            if(premium > 0) {
+              priceLabel = ` <span class="small" style="font-weight:400">(+$${premium.toLocaleString()} for your van)</span>`;
+            }
           }
         } else {
-          displayPrice = opt.basePrice;
+          displayPrice = opt.basePrice || opt.price || 0;
           priceLabel = ' <span class="small" style="font-weight:400">(select van model first)</span>';
         }
       }
@@ -443,10 +498,10 @@ document.addEventListener("DOMContentLoaded", function() {
         lines.forEach(o=>{
           let price = o.price || 0;
           
-          // Calculate dynamic price for bed base
-          if(k === "bed_base") {
+          // Calculate dynamic price if applicable
+          if(cfg.getPricing) {
             const vanModel = state.van_model;
-            price = vanModel ? getBedPrice(o.id, vanModel) : o.basePrice;
+            price = vanModel ? getDynamicPrice(k, o.id, vanModel) : (o.basePrice || o.price || 0);
           }
           
           // Only add to total if this isn't van_model (which has no price)
@@ -525,20 +580,24 @@ document.addEventListener("DOMContentLoaded", function() {
       
       if(cfg.type==="multi"){
         const items = (sel||[]).map(id => cfg.options.find(o=>o.id===id)).filter(Boolean);
-        selected[k] = items.map(o=>({id:o.id,name:o.name,price:o.price}));
-        total += items.reduce((s,o)=>s+o.price,0);
+        selected[k] = items.map(o=>{
+          let price = o.price || 0;
+          // No dynamic pricing for accessories currently, but keeping structure consistent
+          return {id:o.id, name:o.name, price:price};
+        });
+        total += items.reduce((s,o)=>s+(o.price||0),0);
       }else if(sel){
         const o = cfg.options.find(o=>o.id===sel);
         if(o){ 
           let price = o.price || 0;
           
-          // Calculate dynamic price for bed base
-          if(k === "bed_base") {
+          // Calculate dynamic price if applicable
+          if(cfg.getPricing) {
             const vanModel = state.van_model;
-            price = vanModel ? getBedPrice(o.id, vanModel) : o.basePrice;
+            price = vanModel ? getDynamicPrice(k, o.id, vanModel) : (o.basePrice || o.price || 0);
           }
           
-          selected[k] = {id:o.id,name:o.name,price:price}; 
+          selected[k] = {id:o.id, name:o.name, price:price}; 
           total += price; 
         }
       }
@@ -574,8 +633,8 @@ document.addEventListener("DOMContentLoaded", function() {
     return ({
       van_model:"Select your van to see accurate pricing.",
       bed_base:"Select your base cabinetry layout. Pricing adjusts based on your van model.",
-      flooring:"Choose your insulated floor system (optional if you already have flooring).",
-      panels:"Pick your wall & ceiling panels.",
+      flooring:"Choose your insulated floor system (optional if you already have flooring). Pricing adjusts based on your van model.",
+      panels:"Pick your wall & ceiling panels. Pricing adjusts based on your van model.",
       front_module:"Add a front module (optional).",
       accessories:"Finish with optional accessories."
     })[key] || "";
