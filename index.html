@@ -135,6 +135,7 @@ document.addEventListener("DOMContentLoaded", function() {
   /* ======== 0) CONFIG ======== */
   // Points to your serverless function (Netlify). For Vercel, change to /api/vantopia-submit
   const WEBHOOK_URL = "/.netlify/functions/vantopia-submit";
+  const SHIPPING_COST = 650;
 
   const CATALOG = {
     van_model: {
@@ -286,6 +287,11 @@ document.addEventListener("DOMContentLoaded", function() {
     return getDynamicPrice('bed_base', bedId, vanModel);
   }
 
+  // Get shipping cost - FIXED: Check if delivery includes "Shipping"
+  function getShippingCost() {
+    return (state.delivery && state.delivery.includes("Shipping")) ? SHIPPING_COST : 0;
+  }
+
   /* ======== 2) DOM HOOKS ======== */
   const stepsEl = document.getElementById("steps");
   const progressEl = document.getElementById("progress");
@@ -419,6 +425,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <div><label for="name">Full Name</label><input id="name" placeholder="Jane Doe" value="${state.name||""}"></div>
         <div><label for="email">Email</label><input id="email" type="email" placeholder="you@example.com" value="${state.email||""}"></div>
         <div><label for="phone">Phone</label><input id="phone" placeholder="(###) ###-####" value="${state.phone||""}"></div>
+        <div><label for="delivery">Delivery Method</label><select id="delivery">${optionList(["Shipping ($650)","Factory Pickup (Free)"], state.delivery)}</select></div>
         <div><label for="install">Installation Preference</label><select id="install">${optionList(["Self install","Factory install at Vantopia","Undecided"], state.install)}</select></div>
         <div><label for="timeline">Target Timeline</label><select id="timeline">${optionList(["ASAP","1–2 months","3–4 months","Just planning"], state.timeline)}</select></div>
         <div style="grid-column:1/-1"><label for="notes">Notes</label><textarea id="notes" placeholder="Any specific needs, add-ons, or questions?">${state.notes||""}</textarea></div>
@@ -433,9 +440,16 @@ document.addEventListener("DOMContentLoaded", function() {
       </div>
     `;
     queueMicrotask(()=>{
-      ["name","email","phone","install","timeline","notes"].forEach(id=>{
+      ["name","email","phone","delivery","install","timeline","notes"].forEach(id=>{
         const el = panel.querySelector("#"+id);
-        el && el.addEventListener("input", ()=>{ state[id] = el.value; persist(); });
+        el && el.addEventListener("input", ()=>{ 
+          state[id] = el.value; 
+          persist(); 
+          // Update summary when delivery changes
+          if(id === "delivery") {
+            renderSummary();
+          }
+        });
       });
       panel.querySelector("#submitBtn").addEventListener("click", submitOrder);
       panel.querySelector("#backBtn").addEventListener("click", ()=> setStep(detailsStepIndex-1));
@@ -520,6 +534,17 @@ document.addEventListener("DOMContentLoaded", function() {
       box.appendChild(div("divider"));
     });
 
+    // Add shipping if selected
+    const shippingCost = getShippingCost();
+    if(shippingCost > 0) {
+      const shippingTitle = div("small");
+      shippingTitle.textContent = "Delivery";
+      box.appendChild(shippingTitle);
+      box.appendChild(row("Shipping", money(shippingCost)));
+      box.appendChild(div("divider"));
+      total += shippingCost;
+    }
+
     document.getElementById("sumTotal").textContent = money(total);
   }
 
@@ -532,6 +557,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
     if(!state.name) missing.push("Name");
     if(!state.email) missing.push("Email");
+    if(!state.delivery) missing.push("Delivery Method");
 
     const status = document.getElementById("submitStatus");
     status.innerHTML = "";
@@ -603,6 +629,10 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     });
 
+    // Add shipping to total
+    const shippingCost = getShippingCost();
+    total += shippingCost;
+
     // Get van model name for details
     let vanModelName = "";
     if(state.van_model) {
@@ -615,6 +645,7 @@ document.addEventListener("DOMContentLoaded", function() {
       email: state.email || "",
       phone: state.phone || "",
       van: vanModelName,
+      delivery: state.delivery || "",
       install: state.install || "",
       timeline: state.timeline || "",
       notes: state.notes || ""
@@ -623,6 +654,7 @@ document.addEventListener("DOMContentLoaded", function() {
     return {
       meta:{ source:"vantopia_wizard_v2", submittedAt: new Date().toISOString() },
       selections:selected,
+      shipping: shippingCost,
       subtotal: total,
       details
     };
