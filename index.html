@@ -36,7 +36,7 @@
   .bar{height:6px;background:var(--muted);border-radius:999px;overflow:hidden;margin-top:8px}
   .bar>span{display:block;height:100%;width:0;background:var(--brand);transition:width .35s ease}
   @media (min-width:960px){
-    .stepper{display:grid;grid-template-columns:repeat(7,1fr);overflow:visible;padding-bottom:0;scroll-snap-type:none}
+    .stepper{display:grid;grid-template-columns:repeat(8,1fr);overflow:visible;padding-bottom:0;scroll-snap-type:none}
     .step{min-width:auto}
   }
   .grid{display:grid;grid-template-columns:1fr 320px;gap:18px}
@@ -98,7 +98,7 @@
   <div class="header">
     <div>
       <div class="brand">Build Your Van Kit</div>
-      <div class="tagline">Choose your layout in 7 easy steps. We'll follow up to confirm and process payment.</div>
+      <div class="tagline">Choose your layout in 8 easy steps. We'll follow up to confirm and process payment.</div>
     </div>
     <div style="min-width:180px">
       <div class="bar" aria-hidden="true"><span id="progress"></span></div>
@@ -110,9 +110,10 @@
     <div class="step" tabindex="0">2 · Bed Base</div>
     <div class="step" tabindex="0">3 · Flooring</div>
     <div class="step" tabindex="0">4 · Panels</div>
-    <div class="step" tabindex="0">5 · Front Module</div>
-    <div class="step" tabindex="0">6 · Accessories</div>
-    <div class="step" tabindex="0">7 · Details</div>
+    <div class="step" tabindex="0">5 · Color</div>
+    <div class="step" tabindex="0">6 · Front Module</div>
+    <div class="step" tabindex="0">7 · Accessories</div>
+    <div class="step" tabindex="0">8 · Details</div>
   </div>
 
   <div class="grid">
@@ -237,8 +238,18 @@ document.addEventListener("DOMContentLoaded", function() {
         { id:"melamine", name:"Melamine Ply Paneling", basePrice: 1150, img:"https://static.wixstatic.com/media/2d2f9b_b43c8cfa88414aee999dfbf11e7a67d0~mv2.jpg/v1/fill/w_960,h_598,al_c,q_85,usm_0.66_1.00_0.01/2d2f9b_b43c8cfa88414aee999dfbf11e7a67d0~mv2.webp", blurb:"Lightweight & clean." }
       ]
     },
+    color_finish: {
+      title: "Step 5 · Color & Finish",
+      type: "single", required: true,
+      options: [
+        { id:"natural_wood", name:"Natural Wood", img:"https://static.wixstatic.com/media/2d2f9b_acc60ec5fa354a51960e85c478633297~mv2.png/v1/fill/w_1960,h_1102,al_c,q_95,usm_0.66_1.00_0.01,enc_avif,quality_auto/2d2f9b_acc60ec5fa354a51960e85c478633297~mv2.png", blurb:"Warm, natural wood tone" },
+        { id:"forest_green", name:"Forest Green", img:"https://static.wixstatic.com/media/4b7f87_dddf7149e2e04bc68ee80993f2919d89~mv2.png", blurb:"Deep, rich green" },
+        { id:"pacific_blue", name:"Pacific Blue", img:"https://static.wixstatic.com/media/4b7f87_dbe44ff1542f49c0b013c47446788948~mv2.png", blurb:"Cool, calming blue" },
+        { id:"moonlight_white", name:"Moonlight White", img:"https://static.wixstatic.com/media/4b7f87_5e02faa088234ffc86e46853616e77b2~mv2.png", blurb:"Clean, bright white" }
+      ]
+    },
     front_module: {
-      title: "Step 5 · Front Module",
+      title: "Step 6 · Front Module",
       type: "single-or-none", required: false,
       options: [
         { id:"pantry_combo", name:"Pantry Combo Module", price: 1950, img:"https://static.wixstatic.com/media/4b7f87_105e956e305a494d80b7cf98a8acb2e3~mv2.png/v1/fill/w_776,h_682,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/Pantry%20Combo%20Module.png", blurb:"Compact pantry storage." },
@@ -247,12 +258,13 @@ document.addEventListener("DOMContentLoaded", function() {
       ]
     },
     accessories: {
-      title: "Step 6 · Accessories",
+      title: "Step 7 · Accessories",
       type: "multi", required: false,
       options: [
         { id:"bike_slider", name:"Bike & Storage Slider", price: 750, img:"https://static.wixstatic.com/media/4b7f87_8426031d57514266881361588f1380b0~mv2.png/v1/fill/w_776,h_682,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/bike%20Module.png", blurb:"Slide-out base for bikes & gear." },
         { id:"dinette_cushions", name:"Dinette Cushions", price: 1750, img:"https://static.wixstatic.com/media/4b7f87_099fe720220e439aa8c67c0108872ce9~mv2.png/v1/fill/w_776,h_682,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/dinette%20cushions.png", blurb:"Upholstered cushions sized to our dinette." },
-        { id:"switch_fuse", name:"Prewired Switch & Fuse Panel", price: 450, img:"https://static.wixstatic.com/media/4b7f87_3abc6e9417ea4f9288cc0861ced47e44~mv2.avif/v1/fill/w_750,h_682,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/2d2f9b_5b0fa7cf68564b2591e5edc4348d8b66~mv2.avif", blurb:"Clean power distribution." }
+        { id:"switch_fuse", name:"Prewired Switch & Fuse Panel", price: 450, img:"https://static.wixstatic.com/media/4b7f87_3abc6e9417ea4f9288cc0861ced47e44~mv2.avif/v1/fill/w_750,h_682,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/2d2f9b_5b0fa7cf68564b2591e5edc4348d8b66~mv2.avif", blurb:"Clean power distribution." },
+        { id:"tank_carriage", name:"Tank Carriage", price: 450, img:"https://static.wixstatic.com/media/4b7f87_407db2a14ff7445ea6dda8214af8467a~mv2.webp", blurb:"Fresh water on demand, secured and ready." }
       ]
     }
   };
@@ -373,8 +385,8 @@ document.addEventListener("DOMContentLoaded", function() {
         }
       }
       
-      // Build HTML based on whether this is van_model or has pricing
-      if(key === "van_model") {
+      // Build HTML based on whether this is van_model, color_finish, or has pricing
+      if(key === "van_model" || key === "color_finish") {
         body.innerHTML = `
           <h3>${opt.name}</h3>
           <div class="sub">${opt.blurb || ""}</div>
@@ -419,7 +431,7 @@ document.addEventListener("DOMContentLoaded", function() {
   function renderDetails(){
     const panel = div("panel");
     panel.innerHTML = `
-      <h2>Step 7 · Your Details</h2>
+      <h2>Step 8 · Your Details</h2>
       <p class="lead">Tell us about your build and how to reach you. We'll confirm availability and finalize payment.</p>
       <div class="form-grid">
         <div><label for="name">Full Name</label><input id="name" placeholder="Jane Doe" value="${state.name||""}"></div>
@@ -518,13 +530,13 @@ document.addEventListener("DOMContentLoaded", function() {
             price = vanModel ? getDynamicPrice(k, o.id, vanModel) : (o.basePrice || o.price || 0);
           }
           
-          // Only add to total if this isn't van_model (which has no price)
-          if(k !== "van_model") {
+          // Only add to total if this isn't van_model or color_finish (which have no price)
+          if(k !== "van_model" && k !== "color_finish") {
             total += price;
           }
           
-          // Display price only for non-van_model items
-          if(k === "van_model") {
+          // Display price only for items that have pricing
+          if(k === "van_model" || k === "color_finish") {
             box.appendChild(row(o.name, ""));
           } else {
             box.appendChild(row(o.name, money(price)));
@@ -604,6 +616,15 @@ document.addEventListener("DOMContentLoaded", function() {
       // Skip van_model in selections (it goes in details.van instead)
       if(k === "van_model") return;
       
+      // Skip color_finish pricing (it's free, just show selection)
+      if(k === "color_finish"){
+        if(sel){
+          const o = cfg.options.find(o=>o.id===sel);
+          if(o) selected[k] = {id:o.id, name:o.name, price:0};
+        }
+        return;
+      }
+      
       if(cfg.type==="multi"){
         const items = (sel||[]).map(id => cfg.options.find(o=>o.id===id)).filter(Boolean);
         selected[k] = items.map(o=>{
@@ -667,6 +688,7 @@ document.addEventListener("DOMContentLoaded", function() {
       bed_base:"Select your base cabinetry layout. Pricing adjusts based on your van model.",
       flooring:"Choose your insulated floor system (optional if you already have flooring). Pricing adjusts based on your van model.",
       panels:"Pick your wall & ceiling panels. Pricing adjusts based on your van model.",
+      color_finish:"Choose your cabinet color finish to match your style.",
       front_module:"Add a front module (optional).",
       accessories:"Finish with optional accessories."
     })[key] || "";
