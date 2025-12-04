@@ -208,7 +208,7 @@ document.addEventListener("DOMContentLoaded", function() {
     },
     panels: {
       title: "Step 4 · Wall & Ceiling Panels",
-      type: "single", required: true,
+      type: "single-or-none", required: false,
       getPricing: function() {
         return {
           acm: {
