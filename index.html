@@ -434,6 +434,7 @@ document.addEventListener("DOMContentLoaded", function() {
     panel.innerHTML = `
       <h2>Step 7 · Your Details</h2>
       <p class="lead">Tell us about your build and how to reach you. We'll confirm availability and finalize payment.</p>
+      <div id="detailsStatus"></div>
       <div class="form-grid">
         <div><label for="name">Full Name</label><input id="name" placeholder="Jane Doe" value="${state.name||""}"></div>
         <div><label for="email">Email</label><input id="email" type="email" placeholder="you@example.com" value="${state.email||""}"></div>
@@ -594,7 +595,9 @@ document.addEventListener("DOMContentLoaded", function() {
     if(!state.email) missing.push("Email");
     if(!state.delivery) missing.push("Delivery Method");
 
-    const status = document.getElementById("submitStatus");
+    const status =
+      document.getElementById("detailsStatus") ||
+      document.getElementById("submitStatus");
     status.innerHTML = "";
 
     if(missing.length){
@@ -620,6 +623,7 @@ document.addEventListener("DOMContentLoaded", function() {
         throw new Error('Bad response '+res.status);
       }
       status.innerHTML = `<div class="success"><strong>Thank you!</strong> Your build was submitted. We'll follow up by email shortly.</div>`;
+      status.scrollIntoView({ behavior: "smooth", block: "start" });
     }catch(err){
       console.error(err);
       status.innerHTML = `<div class="alert">We couldn't reach the server. Please retry in a moment.</div>`;
